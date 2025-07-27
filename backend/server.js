@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 
 // --- 2. ตั้งค่าตัวแปรหลัก ---
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const SALT_ROUNDS = 10;
 const JWT_SECRET = 'your_super_secret_key';
 
