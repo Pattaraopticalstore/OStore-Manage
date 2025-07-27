@@ -163,6 +163,16 @@ app.get('/api/health-check', async (req, res) => {
     }
 });
 
+app.post("/api/users/login", async (req, res) => {
+  try {
+    // login logic
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์ขณะเข้าสู่ระบบ" });
+  }
+});
+
+
 
 // --- 7. สั่งให้เซิร์ฟเวอร์เริ่มทำงาน ---
 app.listen(PORT, () => {
