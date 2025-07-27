@@ -33,7 +33,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/api'; // 👈 ตรวจสอบว่าใช้ api instance
 import { useRouter } from 'vue-router';
 
 const invoices = ref([]);
@@ -41,7 +41,7 @@ const router = useRouter();
 
 const fetchInvoices = async () => {
   try {
-    const res = await axios.get('http://localhost:3001/api/invoices');
+    const res = await api.get('/api/invoices');
     invoices.value = res.data;
   } catch (error) {
     console.error("Failed to fetch invoices:", error);
@@ -49,21 +49,22 @@ const fetchInvoices = async () => {
 };
 
 const viewInvoice = (id) => {
-  // เราจะสร้างหน้านี้ในขั้นตอนต่อไป
-  // แต่ตอนนี้ยังไม่มี เราจะเปิดในแท็บใหม่
   const routeData = router.resolve({ name: 'invoice-detail', params: { id } });
   window.open(routeData.href, '_blank');
 };
 
+// 👇 แทนที่ฟังก์ชันนี้ทั้งหมด
 const deleteInvoice = async (id) => {
     if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบบิล #${id}?\nการกระทำนี้จะคืนสต็อกสินค้ากลับเข้าระบบ`)) {
         try {
-            await axios.delete(`http://localhost:3001/api/invoices/${id}`);
+            await api.delete(`/api/invoices/${id}`);
             alert('ลบบิลสำเร็จ');
-            fetchInvoices(); // โหลดรายการใหม่
+            fetchInvoices();
         } catch (error) {
             console.error("Failed to delete invoice:", error);
-            alert('เกิดข้อผิดพลาดในการลบ');
+            // แสดงข้อความจาก Server ถ้ามี
+            const errorMessage = error.response?.data?.message || 'เกิดข้อผิดพลาดในการลบ';
+            alert(errorMessage);
         }
     }
 };

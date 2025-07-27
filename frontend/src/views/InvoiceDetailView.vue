@@ -73,7 +73,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
+import api from '@/api';
 
 const route = useRoute();
 const invoice = ref(null);
@@ -136,7 +136,7 @@ const totalInThaiWords = computed(() => {
 const fetchInvoiceDetail = async () => {
   const invoiceId = route.params.id;
   try {
-    const res = await axios.get(`http://localhost:3001/api/invoices/${invoiceId}`);
+    const res = await api.get(`/api/invoices/${invoiceId}`);
     invoice.value = res.data;
   } catch (error) {
     console.error("Failed to fetch invoice detail:", error);
@@ -146,7 +146,7 @@ const fetchInvoiceDetail = async () => {
 
 const fetchShopInfo = async () => {
     try {
-        const res = await axios.get('http://localhost:3001/api/shop-info');
+        const res = await api.get('/api/shop-info');
         shopInfo.value = res.data;
     } catch (error) { console.error(error); }
 };

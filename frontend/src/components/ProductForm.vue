@@ -41,7 +41,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import axios from 'axios';
+import api from '@/api';
 
 const props = defineProps({ productToEdit: Object });
 const emit = defineEmits(['product-saved']);
@@ -67,9 +67,9 @@ watch(() => props.productToEdit, (newVal) => {
 const saveProduct = async () => {
   try {
     if (product.value.id) {
-      await axios.put(`http://localhost:3001/api/products/${product.value.id}`, product.value);
+      await api.put(`/api/products/${product.value.id}`, product.value);
     } else {
-      await axios.post('http://localhost:3001/api/products', product.value);
+      await api.post('/api/products', product.value);
     }
     emit('product-saved');
   } catch (error) { 

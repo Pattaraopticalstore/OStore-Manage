@@ -123,7 +123,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import api from '@/api';
 
 const route = useRoute();
 const router = useRouter();
@@ -156,7 +156,7 @@ const resetPrescriptionForm = () => {
 
 const fetchCustomerData = async () => {
   try {
-    const res = await axios.get(`http://localhost:3001/api/customers/${customerId}`);
+    const res = await api.get(`/api/customers/${customerId}`);
     customer.value = res.data;
   } catch (error) { 
     console.error("Failed to fetch customer", error); 
@@ -165,7 +165,7 @@ const fetchCustomerData = async () => {
 
 const fetchPrescriptions = async () => {
   try {
-    const res = await axios.get(`http://localhost:3001/api/customers/${customerId}/prescriptions`);
+    const res = await api.get(`/api/customers/${customerId}/prescriptions`);
     prescriptions.value = res.data;
   } catch (error) { 
     console.error("Failed to fetch prescriptions", error); 
@@ -174,7 +174,7 @@ const fetchPrescriptions = async () => {
 
 const fetchInvoices = async () => {
   try {
-    const res = await axios.get(`http://localhost:3001/api/customers/${customerId}/invoices`);
+    const res = await api.get(`/api/customers/${customerId}/invoices`);
     invoices.value = res.data;
   } catch (error) { 
     console.error("Failed to fetch invoices", error); 
@@ -183,7 +183,7 @@ const fetchInvoices = async () => {
 
 const saveHealthInfo = async () => {
   try {
-    await axios.put(`http://localhost:3001/api/customers/${customerId}/health-info`, {
+    await api.put(`/api/customers/${customerId}/health-info`, {
       health_conditions: customer.value.health_conditions,
       lifestyle_notes: customer.value.lifestyle_notes,
     });
@@ -196,7 +196,7 @@ const saveHealthInfo = async () => {
 
 const saveNewPrescription = async () => {
   try {
-    await axios.post(`http://localhost:3001/api/customers/${customerId}/prescriptions`, newPrescription.value);
+    await api.post(`/api/customers/${customerId}/prescriptions`, newPrescription.value);
     alert('เพิ่มค่าสายตาสำเร็จ!');
     resetPrescriptionForm();
     fetchPrescriptions();

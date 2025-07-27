@@ -1,6 +1,6 @@
 // src/stores/auth.js
 import { defineStore } from 'pinia';
-import axios from 'axios';
+import api from '@/api';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -13,31 +13,24 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     async login(credentials) {
-      const response = await axios.post('http://localhost:3001/api/users/login', credentials);
+      const response = await api.post('/api/users/login', credentials);
       const { token, user } = response.data;
-
+      
       this.token = token;
       this.user = user;
 
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
-
-      // ตั้งค่า header ของ axios สำหรับทุก request ต่อไป
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     },
     logout() {
       this.token = null;
       this.user = null;
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      delete axios.defaults.headers.common['Authorization'];
-      // บังคับให้ไปหน้า login
       this.router.push('/login');
     },
-
     async register(userInfo) {
-      // ใช้ token ของ admin ที่ login อยู่ในการยืนยันสิทธิ์
-      await axios.post('http://localhost:3001/api/users/register', userInfo);
-        },
+      await api.post('/api/users/register', userInfo);
     },
+  },
 });

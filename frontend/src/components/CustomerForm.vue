@@ -52,7 +52,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import axios from 'axios';
+import api from '@/api';
 
 const props = defineProps({
   customerToEdit: Object
@@ -97,9 +97,9 @@ watch(() => props.customerToEdit, (newVal) => {
 const saveCustomer = async () => {
   try {
     if (customer.value.id) {
-      await axios.put(`http://localhost:3001/api/customers/${customer.value.id}`, customer.value);
+      await api.put(`/api/customers/${customer.value.id}`, customer.value);
     } else {
-      await axios.post('http://localhost:3001/api/customers', customer.value);
+      await api.post('/api/customers', customer.value);
     }
     alert('บันทึกข้อมูลสำเร็จ!');
     emit('customer-saved');

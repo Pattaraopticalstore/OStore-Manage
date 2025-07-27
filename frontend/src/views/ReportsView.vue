@@ -23,7 +23,7 @@
   </div>
 
   <div class="card report-display" v-if="reportData">
-    
+
     <div v-if="selectedReport === 'sales'">
       <h3>รายงานยอดขาย ({{ formatDate(startDate) }} - {{ formatDate(endDate) }})</h3>
       <div class="sales-summary">
@@ -53,16 +53,16 @@
         </table>
       </div>
     </div>
-    
+
     <div v-if="selectedReport === 'profit-loss'">
       <h3>สรุปผลประกอบการ ({{ formatDate(startDate) }} - {{ formatDate(endDate) }})</h3>
-      <div class="summary-grid">
+      <div class="summary-grid" v-if="reportData">
         <span class="grid-header">รายการ</span><span class="grid-header amount-header">จำนวนเงิน (บาท)</span>
-        <span>(+) รายรับรวมจากการขาย</span><strong>{{ reportData.totalRevenue.toFixed(2) }}</strong>
-        <span>(-) ต้นทุนสินค้าที่ขายไป (COGS)</span><strong>- {{ reportData.totalCogs.toFixed(2) }}</strong>
-        <span class="gross-profit">(=) กำไรขั้นต้น</span><strong class="gross-profit">{{ reportData.grossProfit.toFixed(2) }}</strong>
-        <span>(-) รายจ่ายในการดำเนินงาน</span><strong>- {{ reportData.totalExpenses.toFixed(2) }}</strong>
-        <span class="net-profit">(=) กำไรสุทธิ</span><strong class="net-profit">{{ reportData.netProfit.toFixed(2) }}</strong>
+        <span>(+) รายรับรวมจากการขาย</span><strong>{{ reportData.totalRevenue?.toFixed(2) }}</strong>
+        <span>(-) ต้นทุนสินค้าที่ขายไป (COGS)</span><strong>- {{ reportData.totalCogs?.toFixed(2) }}</strong>
+        <span class="gross-profit">(=) กำไรขั้นต้น</span><strong class="gross-profit">{{ reportData.grossProfit?.toFixed(2) }}</strong>
+        <span>(-) รายจ่ายในการดำเนินงาน</span><strong>- {{ reportData.totalExpenses?.toFixed(2) }}</strong>
+        <span class="net-profit">(=) กำไรสุทธิ</span><strong class="net-profit">{{ reportData.netProfit?.toFixed(2) }}</strong>
       </div>
     </div>
 
@@ -93,10 +93,10 @@
         </div>
       </div>
       <div v-if="reportData.summary" class="sales-summary" style="margin-top: 2rem;">
-        <div>รายรับรวม: <strong>{{ reportData.summary.totalIncome.toFixed(2) }}</strong> บาท</div>
-        <div>รายจ่ายรวม: <strong>{{ reportData.summary.totalExpense.toFixed(2) }}</strong> บาท</div>
+        <div>รายรับรวม: <strong>{{ reportData.summary.totalIncome?.toFixed(2) }}</strong> บาท</div>
+        <div>รายจ่ายรวม: <strong>{{ reportData.summary.totalExpense?.toFixed(2) }}</strong> บาท</div>
         <div :class="reportData.summary.netResult >= 0 ? 'net-profit-style' : 'net-loss'">
-          คงเหลือสุทธิ: <strong>{{ reportData.summary.netResult.toFixed(2) }}</strong> บาท
+          คงเหลือสุทธิ: <strong>{{ reportData.summary.netResult?.toFixed(2) }}</strong> บาท
         </div>
       </div>
     </div>
@@ -122,7 +122,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import axios from 'axios';
+import api from '@/api';
 
 const selectedReport = ref('sales');
 const startDate = ref(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10));
@@ -152,7 +152,7 @@ const generateReport = async () => {
   reportData.value = null;
   const params = { startDate: startDate.value, endDate: endDate.value };
   try {
-    const response = await axios.get(`http://localhost:3001/api/reports/${selectedReport.value}`, { params });
+    const response = await api.get(`/api/reports/${selectedReport.value}`, { params });
     reportData.value = response.data;
   } catch (error) { console.error(`Failed to fetch ${selectedReport.value} report:`, error); alert('ไม่สามารถดึงข้อมูลรายงานได้'); }
 };

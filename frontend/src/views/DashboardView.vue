@@ -60,7 +60,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
+import api from '@/api'; // 👈 แก้ไข import จาก axios เป็น api
 import { Bar } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 
@@ -76,13 +76,11 @@ const salesChartData = computed(() => {
   if (!salesData.value) return { labels: [], datasets: [] };
   return {
     labels: salesData.value.map(d => new Date(d.sale_date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })),
-    datasets: [
-      {
+    datasets: [{
         label: 'ยอดขาย (บาท)',
         backgroundColor: '#009688',
         data: salesData.value.map(d => parseFloat(d.daily_sales))
-      }
-    ]
+    }]
   };
 });
 
@@ -93,19 +91,18 @@ const chartOptions = ref({
 
 onMounted(async () => {
   try {
-    // 👇 เพิ่มการเรียก API ใหม่เข้าไปใน Promise.all
     const [statsRes, salesRes, topProductsRes, grossProfitRes, lowStockRes] = await Promise.all([
-      axios.get('http://localhost:3001/api/dashboard/stats'),
-      axios.get('http://localhost:3001/api/dashboard/sales-over-time'),
-      axios.get('http://localhost:3001/api/dashboard/top-products'),
-      axios.get('http://localhost:3001/api/dashboard/gross-profit-today'), // 👈 เรียก API ใหม่
-      axios.get('http://localhost:3001/api/dashboard/low-stock-products')  // 👈 เรียก API ใหม่
+      api.get('/api/dashboard/stats'), // 👈 แก้ไข axios เป็น api
+      api.get('/api/dashboard/sales-over-time'), // 👈 แก้ไข axios เป็น api
+      api.get('/api/dashboard/top-products'), // 👈 แก้ไข axios เป็น api
+      api.get('/api/dashboard/gross-profit-today'), // 👈 แก้ไข axios เป็น api
+      api.get('/api/dashboard/low-stock-products') // 👈 แก้ไข axios เป็น api
     ]);
     stats.value = statsRes.data;
     salesData.value = salesRes.data;
     topProducts.value = topProductsRes.data;
-    grossProfitToday.value = grossProfitRes.data.gross_profit_today; // 👈 กำหนดค่า
-    lowStockProducts.value = lowStockRes.data;                         // 👈 กำหนดค่า
+    grossProfitToday.value = grossProfitRes.data.gross_profit_today;
+    lowStockProducts.value = lowStockRes.data;
   } catch (error) {
     console.error("Failed to fetch dashboard data:", error);
   }

@@ -72,7 +72,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
+import api from '@/api';
 
 // State ทั้งหมดเหมือนเดิม (ฟังก์ชันล่าสุด)
 const allCustomers = ref([]);
@@ -146,7 +146,7 @@ const completeSale = async () => {
     promotion_used: promotionUsed.value
   };
   try {
-    await axios.post('http://localhost:3001/api/invoices', saleData);
+    await api.post('/api/invoices', saleData);
     alert('บันทึกการขายสำเร็จ!');
     // Reset form
     selectedCustomerId.value = null;
@@ -162,8 +162,8 @@ const completeSale = async () => {
   }
 };
 
-const fetchCustomers = async () => { try { const res = await axios.get('http://localhost:3001/api/customers'); allCustomers.value = res.data; } catch (e) { console.error(e); } };
-const fetchProducts = async () => { try { const res = await axios.get('http://localhost:3001/api/products'); allProducts.value = res.data; } catch (e) { console.error(e); } };
+const fetchCustomers = async () => { try { const res = await api.get('/api/customers'); allCustomers.value = res.data; } catch (e) { console.error(e); } };
+const fetchProducts = async () => { try { const res = await api.get('/api/products'); allProducts.value = res.data; } catch (e) { console.error(e); } };
 onMounted(() => { fetchCustomers(); fetchProducts(); });
 </script>
 

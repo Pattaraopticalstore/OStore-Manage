@@ -23,11 +23,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/api';
 const emit = defineEmits(['edit-expense']);
 const expenses = ref([]);
-const fetchExpenses = async () => { try { const res = await axios.get('http://localhost:3001/api/expenses'); expenses.value = res.data; } catch (e) { console.error(e); } };
-const deleteExpense = async (id) => { if (confirm('ยืนยันการลบรายการ?')) { try { await axios.delete(`http://localhost:3001/api/expenses/${id}`); fetchExpenses(); } catch (e) { console.error(e); } } };
+const fetchExpenses = async () => { try { const res = await api.get('/api/expenses'); expenses.value = res.data; } catch (e) { console.error(e); } };
+const deleteExpense = async (id) => { if (confirm('ยืนยันการลบรายการ?')) { try { await api.delete(`/api/expenses/${id}`); fetchExpenses(); } catch (e) { console.error(e); } } };
 onMounted(fetchExpenses);
 defineExpose({ fetchExpenses });
 </script>

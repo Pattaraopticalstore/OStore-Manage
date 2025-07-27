@@ -53,7 +53,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'; // 1. เพิ่ม computed
-import axios from 'axios';
+import api from '@/api.js';
 import { RouterLink } from 'vue-router';
 
 const emit = defineEmits(['edit-customer']);
@@ -88,7 +88,7 @@ const filteredCustomers = computed(() => {
 // --- ฟังก์ชันเดิม ---
 const fetchCustomers = async () => {
   try {
-    const response = await axios.get('http://localhost:3001/api/customers');
+    const response = await api.get('/api/customers');
     customers.value = response.data;
   } catch (error) {
     console.error("ไม่สามารถดึงข้อมูลลูกค้าได้:", error);
@@ -98,7 +98,7 @@ const fetchCustomers = async () => {
 const deleteCustomer = async (id) => {
   if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบลูกค้า ID: ${id}?`)) {
     try {
-      await axios.delete(`http://localhost:3001/api/customers/${id}`);
+      await api.delete(`/api/customers/${id}`);
       fetchCustomers();
     } catch (error) {
       console.error(`ไม่สามารถลบข้อมูลลูกค้า ID: ${id} ได้`, error);

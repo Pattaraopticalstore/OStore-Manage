@@ -32,13 +32,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/api';
 
 const archivedProducts = ref([]);
 
 const fetchArchivedProducts = async () => {
   try {
-    const res = await axios.get('http://localhost:3001/api/products/inactive');
+    const res = await api.get('/api/products/inactive');
     archivedProducts.value = res.data;
   } catch (error) {
     console.error("Failed to fetch archived products:", error);
@@ -48,7 +48,7 @@ const fetchArchivedProducts = async () => {
 const reactivateProduct = async (id) => {
   if (confirm('คุณต้องการนำสินค้านี้กลับมาขายใช่หรือไม่?')) {
     try {
-      await axios.put(`http://localhost:3001/api/products/${id}/reactivate`);
+      await api.put(`/api/products/${id}/reactivate`);
       alert('นำสินค้ากลับมาขายสำเร็จ');
       fetchArchivedProducts(); // โหลดรายการใหม่ (สินค้าที่เพิ่งกู้คืนจะหายไปจากหน้านี้)
     } catch (error) {

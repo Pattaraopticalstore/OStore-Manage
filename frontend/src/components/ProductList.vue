@@ -46,7 +46,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'; // 1. เพิ่ม computed
-import axios from 'axios';
+import api from '@/api';
 
 const emit = defineEmits(['edit-product']);
 const products = ref([]);
@@ -66,16 +66,8 @@ const filteredProducts = computed(() => {
 });
 
 // --- ฟังก์ชันเดิม (ไม่มีการเปลี่ยนแปลง) ---
-const fetchProducts = async () => { try { const res = await axios.get('http://localhost:3001/api/products'); products.value = res.data; } catch (e) { console.error(e); } };
-const deleteProduct = async (id) => {
-  // 👇 เปลี่ยนข้อความใน confirm
-  if (confirm('ยืนยันการซ่อนสินค้า?\nสินค้าจะไม่ถูกลบ แต่จะถูกซ่อนจากการขายและรายการทั้งหมด')) {
-    try {
-      await axios.delete(`http://localhost:3001/api/products/${id}`);
-      fetchProducts();
-    } catch (e) { console.error(e); }
-  }
-};
+const fetchProducts = async () => { try { const res = await api.get('/api/products'); products.value = res.data; } catch (e) { console.error(e); } };
+const deleteProduct = async (id) => { if (confirm('ยืนยันการซ่อนสินค้า?\nสินค้าจะไม่ถูกลบ แต่จะถูกซ่อนจากการขายและรายการทั้งหมด')) { try { await api.delete(`/api/products/${id}`); fetchProducts(); } catch (e) { console.error(e); } } };
 const receiveStock = async (product) => {
   const quantityStr = prompt(`รับสินค้า '${product.name}' เข้าสต็อกจำนวน:`, "1");
 
@@ -90,7 +82,7 @@ const receiveStock = async (product) => {
   }
 
   try {
-    await axios.post(`http://localhost:3001/api/products/${product.id}/add-stock`, { quantityToAdd });
+    await api.post(`/api/products/${product.id}/add-stock`, { quantityToAdd });
     fetchProducts();
   } catch (error) {
     console.error("Failed to add stock:", error);

@@ -41,7 +41,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import axios from 'axios';
+import api from '@/api';
 const props = defineProps({ expenseToEdit: Object });
 const emit = defineEmits(['expense-saved']);
 const form = ref({ id: null, expense_date: new Date().toISOString().slice(0, 10), category: 'อื่นๆ', description: '', amount: '' });
@@ -49,9 +49,9 @@ watch(() => props.expenseToEdit, (newVal) => { form.value = newVal ? { ...newVal
 const saveExpense = async () => {
   try {
     if (form.value.id) {
-      await axios.put(`http://localhost:3001/api/expenses/${form.value.id}`, form.value);
+      await api.put(`/api/expenses/${form.value.id}`, form.value);
     } else {
-      await axios.post('http://localhost:3001/api/expenses', form.value);
+      await api.post('/api/expenses', form.value);
     }
     emit('expense-saved');
   } catch (error) { console.error("Error saving expense:", error); alert('เกิดข้อผิดพลาด'); }

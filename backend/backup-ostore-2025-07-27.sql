@@ -379,7 +379,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 --
 
 COPY public.customers (id, first_name, last_name, phone, birth_date, address, created_at, health_conditions, lifestyle_notes) FROM stdin;
-11	ลุงกุ้ง	นิติพลการแว่น	0000000000	2025-01-01	{"moo": "", "soi": "", "road": "", "district": "", "province": "", "postalCode": "", "houseNumber": "", "subdistrict": ""}	2025-07-27 18:57:56.039922+07	\N	\N
+2	อภินนท์	บุหลาด	0869767677	2005-02-10	{"moo": "3", "soi": "", "road": "เลียบคลองชลประทาน", "district": "หาดใหญ่", "province": "สงขลา", "postalCode": "90110", "houseNumber": "1272", "subdistrict": "ควนลัง"}	2025-07-28 00:18:49.248926+07	\N	\N
 \.
 
 
@@ -404,15 +404,8 @@ COPY public.eye_prescriptions (id, customer_id, exam_date, examiner_name, od_sph
 --
 
 COPY public.invoice_items (id, invoice_id, product_id, quantity, price_per_unit) FROM stdin;
-1	1	1	1	2400.00
-2	2	3	1	1800.00
-3	2	1	1	2400.00
-4	3	3	1	1800.00
-5	5	5	1	13500.00
-6	6	1	1	2400.00
-7	7	1	1	2400.00
-8	8	1	1	2400.00
-9	9	6	1	100.00
+3	3	2	1	1800.00
+4	3	1	1	1800.00
 \.
 
 
@@ -421,15 +414,7 @@ COPY public.invoice_items (id, invoice_id, product_id, quantity, price_per_unit)
 --
 
 COPY public.invoices (id, customer_id, invoice_date, total_amount, payment_method, discount_amount, promotion_used, user_id) FROM stdin;
-8	\N	2025-07-27 17:48:09.898901+07	1900.00	เงินสด	500.00		2
-7	\N	2025-07-27 17:27:10.253809+07	2100.00	QR Code	300.00		1
-2	\N	2025-07-26 05:05:12.672614+07	3500.00	โอนเงิน	700.00		\N
-4	\N	2025-07-26 16:22:04.142234+07	5200.00	เงินสด	0.00		1
-6	\N	2025-07-27 16:17:10.982326+07	2100.00	เงินสด	300.00		1
-1	\N	2025-07-26 03:13:31.169735+07	2000.00	เงินสด	400.00		\N
-3	\N	2025-07-26 12:32:23.889757+07	1800.00	เงินสด	0.00		\N
-5	\N	2025-07-26 18:25:12.91034+07	13500.00	เงินสด	0.00		1
-9	11	2025-07-27 19:00:10.758147+07	100.00	เงินสด	0.00		2
+3	2	2025-07-28 02:28:52.955084+07	3600.00	เงินสด	0.00		2
 \.
 
 
@@ -438,10 +423,8 @@ COPY public.invoices (id, customer_id, invoice_date, total_amount, payment_metho
 --
 
 COPY public.products (id, name, brand, category, cost_price, selling_price, quantity_on_hand, created_at, properties, unit_name, is_active) FROM stdin;
-3	LENS	HITOP	M8 -1.50	100.00	1800.00	0.00	2025-07-26 03:15:47.432128+07	\N	ชิ้น	t
-1	FRAME	POLO VILLAGE 2217	FULLFRAME	120.00	2400.00	0.00	2025-07-26 02:52:32.751376+07	\N	ชิ้น	t
-5	Rx Hilux 1.67 Sensity Fast Grey -1.50 PD31/EP32	HOYA	Lens Rx 	3300.00	13500.00	0.00	2025-07-26 16:33:42.364058+07	\N	ชิ้น	f
-6	รับประกอบแว่น			0.00	100.00	999998.00	2025-07-27 18:59:23.468713+07		ตัว	t
+2	1.56 M8 -0.25	HITOP	Lens	100.00	1800.00	3.00	2025-07-28 00:16:14.510281+07	Bluecut\nUV415	คู่	t
+1	1.56 M8 -0.00 	HITOP	Lens 	100.00	1800.00	4.00	2025-07-28 00:14:25.357009+07	BlueCut\nUV415\n	คู่	t
 \.
 
 
@@ -459,8 +442,8 @@ COPY public.shop_info (id, shop_name, address, phone, tax_id, logo_path) FROM st
 --
 
 COPY public.users (id, username, password_hash, full_name, role) FROM stdin;
-1	admin	$2b$10$fZ/JtIw6SAqWh7lIFn7MO.Ppf4fo/KLy1gxZK9OMH/YRBwQs3/aQ6	ภัทรนันท์ บุหลาด	admin
-2	maliwan	$2b$10$G4AeeCVG9yhpD.JNJqEPxO7YHYsgW/tzPP/jHs.0az2N3YxoSyeAa	มลิวรรณ บุหลาด	staff
+1	admin	$2b$10$0PzFO64FOo.mGnYJ1wljfuIhZsSeZcFL0C1MD8tsB6pxbiMRiorqe	ภัทรนันท์ บุหลาด	admin
+2	maliwan	$2b$10$8FpSF0mK/kD/hwd4MRtIBeGJWMs9nATACf.elbdcnCZAos5.VmsJG	มลิวรรณ บุหลาด	staff
 \.
 
 
@@ -468,42 +451,42 @@ COPY public.users (id, username, password_hash, full_name, role) FROM stdin;
 -- Name: customers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.customers_id_seq', 11, true);
+SELECT pg_catalog.setval('public.customers_id_seq', 2, true);
 
 
 --
 -- Name: expenses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.expenses_id_seq', 1, true);
+SELECT pg_catalog.setval('public.expenses_id_seq', 1, false);
 
 
 --
 -- Name: eye_prescriptions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.eye_prescriptions_id_seq', 7, true);
+SELECT pg_catalog.setval('public.eye_prescriptions_id_seq', 1, true);
 
 
 --
 -- Name: invoice_items_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.invoice_items_id_seq', 9, true);
+SELECT pg_catalog.setval('public.invoice_items_id_seq', 4, true);
 
 
 --
 -- Name: invoices_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.invoices_id_seq', 9, true);
+SELECT pg_catalog.setval('public.invoices_id_seq', 3, true);
 
 
 --
 -- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.products_id_seq', 6, true);
+SELECT pg_catalog.setval('public.products_id_seq', 2, true);
 
 
 --

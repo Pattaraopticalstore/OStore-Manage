@@ -55,7 +55,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/api'; // 👈 แก้ไข import จาก axios เป็น api
 
 const shopInfo = ref({});
 const selectedFile = ref(null);
@@ -63,12 +63,12 @@ const logoPreviewUrl = ref('');
 
 const fetchShopInfo = async () => {
   try {
-    const res = await axios.get('http://localhost:3001/api/shop-info');
+    const res = await api.get('/api/shop-info'); // 👈 แก้ไข axios เป็น api
     if (res.data) {
       shopInfo.value = res.data;
       if (res.data.logo_path) {
-        // สร้าง URL เต็มเพื่อแสดงภาพ
-        logoPreviewUrl.value = `http://localhost:3001${res.data.logo_path}`;
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        logoPreviewUrl.value = `${apiUrl}${res.data.logo_path}`;
       }
     }
   } catch (error) { console.error('Failed to fetch shop info', error); }
@@ -78,36 +78,26 @@ const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
     selectedFile.value = file;
-    // สร้าง URL ชั่วคราวสำหรับแสดงภาพตัวอย่างทันที
     logoPreviewUrl.value = URL.createObjectURL(file);
   }
 };
 
 const saveShopInfo = async () => {
-  // เมื่อส่งไฟล์ ต้องใช้ FormData
   const formData = new FormData();
-  
-  // เพิ่มข้อมูลทั้งหมดลงใน formData
   formData.append('shop_name', shopInfo.value.shop_name || '');
   formData.append('address', shopInfo.value.address || '');
   formData.append('phone', shopInfo.value.phone || '');
   formData.append('tax_id', shopInfo.value.tax_id || '');
   formData.append('existing_logo_path', shopInfo.value.logo_path || '');
-
-  // ถ้ามีการเลือกไฟล์ใหม่ ให้เพิ่มไฟล์นั้นลงไป
   if (selectedFile.value) {
     formData.append('logo', selectedFile.value);
   }
-
   try {
-    // ส่ง formData ไปที่ API
-    await axios.put('http://localhost:3001/api/shop-info', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+    await api.put('/api/shop-info', formData, { // 👈 แก้ไข axios เป็น api
+      headers: { 'Content-Type': 'multipart/form-data' }
     });
     alert('บันทึกข้อมูลร้านค้าสำเร็จ!');
-    fetchShopInfo(); // ดึงข้อมูลล่าสุดมาแสดง
+    fetchShopInfo();
   } catch (error) {
     console.error('Failed to save shop info', error);
     alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -117,28 +107,18 @@ const saveShopInfo = async () => {
 const backupDatabase = async () => {
     if (confirm('คุณต้องการสำรองข้อมูลทั้งหมดหรือไม่?')) {
         try {
-            // 1. ใช้ axios ส่งคำขอไปที่ API
-            const response = await axios.get('http://localhost:3001/api/backup/database', {
-                responseType: 'blob', // 👈 บอกให้ axios รับข้อมูลเป็นไฟล์
+            const response = await api.get('/api/backup/database', { // 👈 แก้ไข axios เป็น api
+                responseType: 'blob',
             });
-
-            // 2. สร้าง URL ชั่วคราวจากไฟล์ที่ได้รับ
             const url = window.URL.createObjectURL(new Blob([response.data]));
-
-            // 3. สร้าง Link ปลอมขึ้นมาเพื่อกดดาวน์โหลด
             const link = document.createElement('a');
             link.href = url;
             const fileName = `backup-ostore-${new Date().toISOString().slice(0, 10)}.sql`;
-            link.setAttribute('download', fileName); // ตั้งชื่อไฟล์
+            link.setAttribute('download', fileName);
             document.body.appendChild(link);
-
-            // 4. สั่งให้เบราว์เซอร์คลิกที่ Link นี้
             link.click();
-
-            // 5. ลบ Link ปลอมทิ้ง
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-
         } catch (error) {
             console.error("Backup failed:", error);
             alert("การสำรองข้อมูลล้มเหลว! (อาจต้องใช้สิทธิ์ Admin)");
