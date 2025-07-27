@@ -1,0 +1,100 @@
+/* src/assets/main.css */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap');
+/* 1. กำหนดตัวแปรสีและฟอนต์หลัก */
+:root {
+  --primary-color: #00695c;
+  --primary-darker: #004d40;
+  --secondary-color: #009688;
+  --background-color: #e0f2f1;
+  --surface-color: #ffffff;
+  --text-color: #333333;
+  --border-color: #e0e0e0;
+  --font-family: 'Noto Sans Thai', sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* 2. Style สำหรับ Card ที่ใช้บ่อยๆ */
+.card {
+  background-color: var(--surface-color);
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+}
+
+.card h2, .card h3 {
+  color: var(--primary-darker);
+  margin-top: 0;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* 3. Style สำหรับปุ่มแบบต่างๆ */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-weight: bold;
+  transition: all 0.2s ease-in-out;
+}
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+.btn-primary:hover {
+  background-color: var(--primary-darker);
+}
+.btn-danger {
+  background-color: #f44336;
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #d32f2f;
+}
+
+/* 4. Style สำหรับ Form Input */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+/* 5. Style สำหรับตาราง */
+table.app-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+.app-table th, .app-table td {
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+.app-table thead th {
+    background-color: var(--secondary-color);
+    color: white;
+    font-weight: bold;
+}
+.app-table tbody tr:nth-of-type(even) {
+    background-color: #f8f9fa;
+}
