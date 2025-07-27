@@ -7,6 +7,8 @@ const multer = require('multer');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
 
 // --- 2. ตั้งค่าตัวแปรหลัก ---
 const app = express();
