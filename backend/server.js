@@ -14,13 +14,14 @@ const PORT = 3001;
 const SALT_ROUNDS = 10;
 const JWT_SECRET = 'your_super_secret_key';
 
-// --- 3. ตั้งค่าการเชื่อมต่อ PostgreSQL ---
+// --- 3. ตั้งค่าการเชื่อมต่อ PostgreSQL (สำหรับใช้งานจริง) ---
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'ostore_manage_db',
-  password: '248543', // ‼️ ตรวจสอบรหัสผ่านของคุณ
-  port: 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  ssl: true // 👈 สำคัญมากสำหรับ Supabase
 });
 
 // --- 4. ใช้ Middlewares ---
