@@ -445,6 +445,27 @@ app.get('/api/backup/database', authenticateToken, (req, res) => {
   });
 });
 
+// GET: สำหรับทดสอบการเชื่อมต่อฐานข้อมูล
+app.get('/api/health-check', async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const time = await client.query('SELECT NOW()'); // ลอง query เวลาจาก DB
+    client.release();
+    res.json({ 
+      status: 'ok', 
+      message: 'Successfully connected to the database.',
+      db_time: time.rows[0].now 
+    });
+  } catch (err) {
+    console.error('Health Check Error:', err);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Failed to connect to the database.',
+      error_message: err.message // ส่งข้อความ error จริงๆ กลับไป
+    });
+  }
+});
+
 
 // --- 7. สั่งให้เซิร์ฟเวอร์เริ่มทำงาน ---
 app.listen(PORT, () => {
