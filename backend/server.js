@@ -25,7 +25,14 @@ const pool = new Pool({
 });
 
 // --- 4. ใช้ Middlewares ---
-app.use(cors());
+const corsOptions = {
+  origin: [
+    'https://o-store-manage.vercel.app', // URL หลักของ Vercel
+    'https://o-store-manage-git-main-pattaraopticalstores-projects.vercel.app', // URL ที่แสดงใน Error
+    'http://localhost:5173' // สำหรับตอนพัฒนากับเครื่องตัวเอง
+  ]
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
