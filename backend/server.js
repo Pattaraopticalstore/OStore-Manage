@@ -23,9 +23,10 @@ const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || 'localhost',
   database: process.env.DB_NAME || 'ostore_manage_db',
-  password: process.env.DB_PASSWORD || '248543', // ‼️ ใช้รหัสผ่านของคุณสำหรับ Local
+  password: process.env.DB_PASSWORD || '248543',
   port: process.env.DB_PORT || 5432,
-  ssl: !!process.env.DB_HOST // เปิด SSL อัตโนมัติเมื่อ deploy
+  ssl: !!process.env.DB_HOST,
+  family: 4 // 👈‼️ เพิ่มบรรทัดนี้เพื่อบังคับใช้ IPv4
 });
 
 // --- 4. ใช้ Middlewares ---
