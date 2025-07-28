@@ -72,9 +72,8 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import api from '@/api';
+import api from '@/api'; // 👈 แก้ไข import จาก axios เป็น api
 
-// State ทั้งหมดเหมือนเดิม (ฟังก์ชันล่าสุด)
 const allCustomers = ref([]);
 const allProducts = ref([]);
 const invoiceItems = ref([]);
@@ -86,7 +85,6 @@ const selectedCustomerName = ref('');
 const discountAmount = ref(0);
 const promotionUsed = ref('');
 
-// Computed properties ทั้งหมดเหมือนเดิม (ฟังก์ชันล่าสุด)
 const subTotal = computed(() => {
   return invoiceItems.value.reduce((sum, item) => sum + (item.quantity * item.selling_price), 0);
 });
@@ -114,7 +112,6 @@ const filteredProducts = computed(() => {
     );
 });
 
-// Methods ทั้งหมดเหมือนเดิม (ฟังก์ชันล่าสุด)
 const selectCustomer = (customer) => {
     selectedCustomerId.value = customer.id;
     selectedCustomerName.value = `${customer.first_name} ${customer.last_name}`;
@@ -146,9 +143,8 @@ const completeSale = async () => {
     promotion_used: promotionUsed.value
   };
   try {
-    await api.post('/api/invoices', saleData);
+    await api.post('/api/invoices', saleData); // 👈 แก้ไข axios เป็น api
     alert('บันทึกการขายสำเร็จ!');
-    // Reset form
     selectedCustomerId.value = null;
     selectedCustomerName.value = '';
     invoiceItems.value = [];
@@ -162,8 +158,8 @@ const completeSale = async () => {
   }
 };
 
-const fetchCustomers = async () => { try { const res = await api.get('/api/customers'); allCustomers.value = res.data; } catch (e) { console.error(e); } };
-const fetchProducts = async () => { try { const res = await api.get('/api/products'); allProducts.value = res.data; } catch (e) { console.error(e); } };
+const fetchCustomers = async () => { try { const res = await api.get('/api/customers'); allCustomers.value = res.data; } catch (e) { console.error(e); } }; // 👈 แก้ไข axios เป็น api
+const fetchProducts = async () => { try { const res = await api.get('/api/products'); allProducts.value = res.data; } catch (e) { console.error(e); } }; // 👈 แก้ไข axios เป็น api
 onMounted(() => { fetchCustomers(); fetchProducts(); });
 </script>
 

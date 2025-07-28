@@ -2,7 +2,7 @@
   <div class="receipt-container">
     <div v-if="invoice" class="receipt-box">
       <div class="receipt-header">
-        <img v-if="shopInfo.logo_path" :src="`http://localhost:3001${shopInfo.logo_path}`" alt="Logo" class="receipt-logo"/>
+        <img v-if="shopInfo.logo_path" :src="`${apiUrl}${shopInfo.logo_path}`" alt="Logo" class="receipt-logo"/>
         <h2>ใบเสร็จรับเงิน/ใบกำกับภาษีอย่างย่อ</h2>
         <h3>{{ shopInfo.shop_name || 'OStore Manage' }}</h3>
         <p v-html="shopInfo.address ? shopInfo.address.replace(/\n/g, '<br>') : ''"></p>
@@ -16,7 +16,8 @@
       <div class="customer-info">
         <strong>ลูกค้า:</strong> {{ invoice.first_name ? `${invoice.first_name} ${invoice.last_name}` : 'ลูกค้าทั่วไป' }} <br>
         <strong>โทร:</strong> {{ invoice.phone || '-' }} <br>
-        <strong>ที่อยู่:</strong> {{ formatAddress(invoice.address) }} </div>
+        <strong>ที่อยู่:</strong> {{ formatAddress(invoice.address) }}
+      </div>
 
       <table class="items-table">
         <thead>
@@ -59,7 +60,8 @@
       <div class="receipt-footer">
         <p>ขอบคุณที่ใช้บริการ</p>
       </div>
-    </div>
+      
+      </div>
     <div v-else>
       <p>กำลังโหลดข้อมูลใบเสร็จ...</p>
     </div>
@@ -73,17 +75,19 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import api from '@/api';
+import api from '@/api'; // 👈 3. แก้ไข import จาก axios เป็น api
 
 const route = useRoute();
 const invoice = ref(null);
 const shopInfo = ref({});
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'; // 👈 4. สร้างตัวแปรสำหรับ URL
 
 const subTotal = computed(() => {
   if (!invoice.value || !invoice.value.items) return 0;
   return invoice.value.items.reduce((sum, item) => sum + (item.quantity * item.price_per_unit), 0);
 });
 
+// 👇 5. แก้ไข Bug ในฟังก์ชันแปลงตัวเลข
 function numberToThaiWords(number) {
     const numbers = "ศูนย์,หนึ่ง,สอง,สาม,สี่,ห้า,หก,เจ็ด,แปด,เก้า".split(",");
     const units = "สิบ,ร้อย,พัน,หมื่น,แสน,ล้าน".split(",");
@@ -101,7 +105,7 @@ function numberToThaiWords(number) {
             let numStr = numbers[digit];
             if (len > 1 && pos === 1 && digit === 2) numStr = "ยี่";
             else if (pos === 1 && digit === 1) numStr = "";
-            else if (pos > 0 && digit === 1 && integer[i-1] !== '0') numStr = "หนึ่ง";
+            else if (pos > 0 && digit === 1 && (len - i) % 6 === 1) numStr = "เอ็ด";
             result += numStr + unit;
         }
     }
@@ -114,18 +118,19 @@ function numberToThaiWords(number) {
         for (let i = 0; i < fracLen; i++) {
             const digit = parseInt(fraction[i]);
             if (digit > 0) {
-                let unit = fracLen - 1 - i > 0 ? units[0] : "";
+                let unit = i === 0 && fracLen > 1 ? units[0] : "";
                 let numStr = numbers[digit];
                  if (fracLen > 1 && i === 0 && digit === 2) numStr = "ยี่";
                  else if (i === 0 && digit === 1) numStr = "";
-                 else if (i > 0 && digit === 1) numStr = "เอ็ด";
-                fracResult += fracResult + numStr;
+                 else if (fracLen > 1 && i === 1 && digit === 1) numStr = "เอ็ด";
+                fracResult += numStr + unit;
             }
         }
         result += fracResult + "สตางค์";
     }
     return result;
 }
+
 
 const totalInThaiWords = computed(() => {
     if (!invoice.value || !invoice.value.total_amount) return '';
@@ -136,7 +141,7 @@ const totalInThaiWords = computed(() => {
 const fetchInvoiceDetail = async () => {
   const invoiceId = route.params.id;
   try {
-    const res = await api.get(`/api/invoices/${invoiceId}`);
+    const res = await api.get(`/api/invoices/${invoiceId}`); // 👈 แก้ไข axios เป็น api
     invoice.value = res.data;
   } catch (error) {
     console.error("Failed to fetch invoice detail:", error);
@@ -146,7 +151,7 @@ const fetchInvoiceDetail = async () => {
 
 const fetchShopInfo = async () => {
     try {
-        const res = await api.get('/api/shop-info');
+        const res = await api.get('/api/shop-info'); // 👈 แก้ไข axios เป็น api
         shopInfo.value = res.data;
     } catch (error) { console.error(error); }
 };
@@ -167,11 +172,10 @@ const formatAddress = (address) => {
     address.province,
     address.postalCode
   ];
-  // กรองส่วนที่ว่างเปล่าออกแล้วเชื่อมด้วยช่องว่าง
   return parts.filter(part => part).join(' ');
 };
 
-// 2. onMounted ที่ถูกต้อง จะต้องมีแค่อันเดียวและเรียกทุกฟังก์ชัน
+// 6. onMounted ที่ถูกต้อง จะต้องมีแค่อันเดียว
 onMounted(async () => {
   await fetchInvoiceDetail();
   await fetchShopInfo();
