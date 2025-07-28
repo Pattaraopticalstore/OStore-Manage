@@ -65,7 +65,26 @@ const authenticateToken = (req, res, next) => {
 
 // --- AUTH API ---
 app.post('/api/users/register', authenticateToken, async (req, res) => { try { const { username, password, full_name, role } = req.body; const password_hash = await bcrypt.hash(password, SALT_ROUNDS); const r = await pool.query("INSERT INTO users (username, password_hash, full_name, role) VALUES ($1, $2, $3, $4) RETURNING id, username, full_name, role", [username, password_hash, full_name, role || 'staff']); res.status(201).json(r.rows[0]); } catch (e) { res.status(500).json({ message: "Username may already exist." }) } });
-app.post('/api/users/login', async (req, res) => { try { const { username, password } = req.body; const result = await pool.query("SELECT * FROM users WHERE username = $1", [username]); if (result.rows.length === 0) { return res.status(401).json({ message: 'Invalid credentials' }); } const user = result.rows[0]; const isValid = await bcrypt.compare(password, user.password_hash); if (!isValid) { return res.status(401).json({ message: 'Invalid credentials' }); } const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '8h' }); res.json({ token, user: { id: user.id, username: user.username, fullName: user.full_name, role: user.role } }); } catch (e) { res.status(500).send("Server Error") } });
+app.post('/api/users/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const result = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
+    if (result.rows.length === 0) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+    const user = result.rows[0];
+    const isValid = await bcrypt.compare(password, user.password_hash);
+    if (!isValid) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '8h' });
+    res.json({ token, user: { id: user.id, username: user.username, fullName: user.full_name, role: user.role } });
+  } catch (e) {
+    // 👇 เพิ่ม console.error เพื่อแสดง Error ใน Log ของ Render
+    console.error('LOGIN ERROR:', e); 
+    res.status(500).send("Server Error");
+  }
+});
 
 // --- CUSTOMERS API ---
 app.get('/api/customers', authenticateToken, async (req, res) => { try { const r = await pool.query("SELECT * FROM customers ORDER BY id DESC"); res.json(r.rows); } catch (e) { res.status(500).send(e.message) } });
