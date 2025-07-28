@@ -92,11 +92,11 @@ const chartOptions = ref({
 onMounted(async () => {
   try {
     const [statsRes, salesRes, topProductsRes, grossProfitRes, lowStockRes] = await Promise.all([
-      api.get('/api/dashboard/stats'), // 👈 แก้ไข axios เป็น api
-      api.get('/api/dashboard/sales-over-time'), // 👈 แก้ไข axios เป็น api
-      api.get('/api/dashboard/top-products'), // 👈 แก้ไข axios เป็น api
-      api.get('/api/dashboard/gross-profit-today'), // 👈 แก้ไข axios เป็น api
-      api.get('/api/dashboard/low-stock-products') // 👈 แก้ไข axios เป็น api
+      api.get('/api/dashboard/stats'),
+      api.get('/api/dashboard/sales-over-time'),
+      api.get('/api/dashboard/top-products'),
+      api.get('/api/dashboard/gross-profit-today'),
+      api.get('/api/dashboard/low-stock-products')
     ]);
     stats.value = statsRes.data;
     salesData.value = salesRes.data;

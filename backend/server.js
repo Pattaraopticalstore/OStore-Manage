@@ -127,7 +127,7 @@ app.get('/api/backup/database', authenticateToken, (req, res) => {
     const pgDumpPath = 'C:\\Program Files\\PostgreSQL\\16\\bin\\pg_dump.exe';
     const command = `\"${pgDumpPath}\" -U ${dbConfig.user} -h ${dbConfig.host} -p ${dbConfig.port} -d ${dbConfig.database} -f \"${filePath}\"`;
     const env = { ...process.env, PGPASSWORD: dbConfig.password, };
-    
+
     exec(command, { env: env }, (error, stdout, stderr) => {
         if (error) {
             console.error(`Backup Exec Error: ${error.message}`);
@@ -162,17 +162,6 @@ app.get('/api/health-check', async (req, res) => {
       });
     }
 });
-
-app.post("/api/users/login", async (req, res) => {
-  try {
-    // login logic
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์ขณะเข้าสู่ระบบ" });
-  }
-});
-
-
 
 // --- 7. สั่งให้เซิร์ฟเวอร์เริ่มทำงาน ---
 app.listen(PORT, () => {
